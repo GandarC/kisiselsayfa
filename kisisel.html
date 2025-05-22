@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L0vis - Cyber Security</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: #000;
+            color: #00ff00;
+            overflow-x: hidden;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        .security-check {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+        
+        .main-content {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .terminal {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+        
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #00ff00;
+        }
+        
+        .terminal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .terminal-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid #00ff00;
+        }
+        
+        .close { background: #ff0000; }
+        .minimize { background: #ffff00; }
+        .maximize { background: #00ff00; }
+        
+        .welcome-text {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .scanning-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+            animation: blink 1s infinite;
+        }
+        
+        .info-display {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info-line {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .approved {
+            text-align: center;
+            font-size: 20px;
+            color: #00ff00;
+            margin: 20px 0;
+            text-shadow: 0 0 15px #00ff00;
+        }
+        
+        .continue-btn {
+            background: transparent;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 15px 30px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+        }
+        
+        .continue-btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes matrix {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+        
+        .matrix-char {
+            position: absolute;
+            color: #00ff00;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+            animation: matrix 10s linear infinite;
+            opacity: 0.3;
+        }
+        
+        /* Ana sayfa stilleri */
+        .header {
+            text-align: center;
+            padding: 50px 0;
+            border-bottom: 2px solid #00ff00;
+            margin-bottom: 50px;
+        }
+        
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ff00;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            opacity: 0.8;
+        }
+        
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section {
+            margin: 50px 0;
+            padding: 30px;
+            border: 1px solid #00ff00;
+            border-radius: 10px;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .skills {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .skill-item {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .contact-item {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 200px;
+        }
+        
+        .glitch {
+            animation: glitch 2s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+        
+        @media (max-width: 768px) {
+            .logo { font-size: 32px; }
+            .subtitle { font-size: 16px; }
+            .terminal { padding: 15px; }
+            .welcome-text { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+    
+    <!-- Güvenlik Kontrolü Sayfası -->
+    <div class="security-check" id="securityCheck">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-title">SECURITY_CHECK.exe</div>
+                <div class="terminal-controls">
+                    <div class="control-btn close"></div>
+                    <div class="control-btn minimize"></div>
+                    <div class="control-btn maximize"></div>
+                </div>
+            </div>
+            
+            <div class="welcome-text glitch">HOŞGELDİNİZ</div>
+            
+            <div class="scanning-text" id="scanningText">
+                > IP kontrolü yapılıyor...
+            </div>
+            
+            <div class="info-display" id="infoDisplay" style="display: none;">
+                <div class="info-line">
+                    <span>IP Adresi:</span>
+                    <span id="ipAddress">192.168.1.100</span>
+                </div>
+                <div class="info-line">
+                    <span>Lokasyon:</span>
+                    <span id="location">İstanbul, Türkiye</span>
+                </div>
+                <div class="info-line">
+                    <span>Cihaz:</span>
+                    <span id="device">Desktop - Chrome</span>
+                </div>
+                <div class="info-line">
+                    <span>ISP:</span>
+                    <span id="isp">Bilinmiyor</span>
+                </div>
+                <div class="info-line">
+                    <span>Durum:</span>
+                    <span style="color: #00ff00;">GÜVENLİ</span>
+                </div>
+            </div>
+            
+            <div class="approved" id="approved" style="display: none;">
+                ✓ ONAYLANDI
+            </div>
+            
+            <button class="continue-btn" id="continueBtn" style="display: none;" onclick="enterMainSite()">
+                DEVAM ET
+            </button>
+        </div>
+    </div>
+    
+    <!-- Ana Site İçeriği -->
+    <div class="main-content" id="mainContent">
+        <div class="header">
+            <div class="logo glitch">L0VIS</div>
+            <div class="subtitle">Cyber Security Specialist & Bug Bounty Hunter</div>
+            <div class="subtitle" style="margin-top: 10px;">Alp ******</div>
+        </div>
+        
+        <div class="content-section">
+            <div class="section">
+                <h2>> HAKKIMDA</h2>
+                <p>Siber güvenlik alanında uzman bir hacker ve bug bounty hunter olarak, sistemlerin güvenlik açıklarını tespit etmek ve kapatmak konusunda deneyimliyim. Etik hacking prensiplerine bağlı kalarak, şirketlerin dijital varlıklarını korumaya yardımcı oluyorum.</p>
+                <p>Penetrasyon testleri, güvenlik açığı değerlendirmeleri ve bug bounty programları aracılığıyla siber güvenlik alanına katkı sağlıyorum.</p>
+            </div>
+            
+            <div class="section">
+                <h2>> YETKİNLİKLER</h2>
+                <div class="skills">
+                    <div class="skill-item">
+                        <h3>Web Application Security</h3>
+                        <p>OWASP Top 10, SQL Injection, XSS, CSRF</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3>Network Security</h3>
+                        <p>Port Scanning, Network Mapping, Protocol Analysis</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3>Penetration Testing</h3>
+                        <p>Black Box, White Box, Gray Box Testing</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3>Bug Bounty</h3>
+                        <p>Vulnerability Research, Exploit Development</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3>Tools & Frameworks</h3>
+                        <p>Burp Suite, Metasploit, Nmap, Wireshark</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3>Programming</h3>
+                        <p>Python, JavaScript, Bash, PowerShell</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>> PROJELER</h2>
+                <p>• Web uygulaması güvenlik testleri ve güvenlik açığı tespiti</p>
+                <p>• Şirket ağlarının penetrasyon testleri</p>
+                <p>• Bug bounty programlarında kritik güvenlik açıklarının keşfi</p>
+                <p>• Güvenlik araçları ve otomatizasyon scriptleri geliştirme</p>
+                <p>• Siber güvenlik eğitimleri ve danışmanlık hizmetleri</p>
+            </div>
+            
+            <div class="section">
+                <h2>> İLETİŞİM</h2>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <h3>Email</h3>
+                        <p>l0vis@protonmail.com</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Bug Bounty</h3>
+                        <p>HackerOne: @L0vis</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Social</h3>
+                        <p>Twitter: @L0vis_Sec</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Matrix efekti
+        function createMatrixEffect() {
+            const matrixBg = document.getElementById('matrixBg');
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                span.className = 'matrix-char';
+                span.textContent = chars[Math.floor(Math.random() * chars.length)];
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDelay = Math.random() * 10 + 's';
+                span.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                matrixBg.appendChild(span);
+            }
+        }
+        
+        // Gerçek cihaz bilgisi fonksiyonu
+        function getDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            let device = 'Unknown';
+            let browser = 'Unknown';
+            
+            // Cihaz tipini tespit et
+            if (/Mobi|Android/i.test(userAgent)) {
+                device = 'Mobile';
+            } else if (/Tablet|iPad/i.test(userAgent)) {
+                device = 'Tablet';
+            } else {
+                device = 'Desktop';
+            }
+            
+            // Tarayıcıyı tespit et
+            if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) {
+                browser = 'Chrome';
+            } else if (userAgent.includes('Firefox')) {
+                browser = 'Firefox';
+            } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+                browser = 'Safari';
+            } else if (userAgent.includes('Edg')) {
+                browser = 'Edge';
+            } else if (userAgent.includes('Opera')) {
+                browser = 'Opera';
+            }
+            
+            return `${device} - ${browser}`;
+        }
+        
+        // Gerçek IP ve lokasyon bilgisi alma
+        async function getRealIPInfo() {
+            try {
+                // IP adresini al
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                
+                // Lokasyon bilgisini al
+                const locationResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+                const locationData = await locationResponse.json();
+                
+                return {
+                    ip: ipData.ip,
+                    city: locationData.city || 'Bilinmiyor',
+                    country: locationData.country_name || 'Bilinmiyor',
+                    region: locationData.region || '',
+                    isp: locationData.org || 'Bilinmiyor'
+                };
+            } catch (error) {
+                console.error('IP bilgisi alınırken hata:', error);
+                // Hata durumunda fallback
+                return {
+                    ip: 'Tespit edilemedi',
+                    city: 'Bilinmiyor',
+                    country: 'Bilinmiyor',
+                    region: '',
+                    isp: 'Bilinmiyor'
+                };
+            }
+        }
+        
+        // Gerçek güvenlik kontrolü
+        async function startSecurityCheck() {
+            const scanningText = document.getElementById('scanningText');
+            const infoDisplay = document.getElementById('infoDisplay');
+            const approved = document.getElementById('approved');
+            const continueBtn = document.getElementById('continueBtn');
+            
+            setTimeout(() => {
+                scanningText.textContent = '> Lokasyon tespit ediliyor...';
+            }, 1000);
+            
+            setTimeout(() => {
+                scanningText.textContent = '> Cihaz bilgileri alınıyor...';
+            }, 2000);
+            
+            setTimeout(() => {
+                scanningText.textContent = '> Güvenlik kontrolü tamamlanıyor...';
+            }, 3000);
+            
+            // Gerçek bilgileri al
+            const ipInfo = await getRealIPInfo();
+            const deviceInfo = getDeviceInfo();
+            
+            setTimeout(() => {
+                scanningText.style.display = 'none';
+                
+                // Gerçek bilgileri göster
+                document.getElementById('ipAddress').textContent = ipInfo.ip;
+                const locationText = ipInfo.region ? 
+                    `${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country}` : 
+                    `${ipInfo.city}, ${ipInfo.country}`;
+                document.getElementById('location').textContent = locationText;
+                document.getElementById('device').textContent = deviceInfo;
+                
+                // ISP bilgisini de göster
+                document.getElementById('isp').textContent = ipInfo.isp;
+                
+                infoDisplay.style.display = 'block';
+            }, 4000);
+            
+            setTimeout(() => {
+                approved.style.display = 'block';
+                continueBtn.style.display = 'block';
+            }, 5500);
+        }
+        
+        // Ana siteye geçiş
+        function enterMainSite() {
+            document.getElementById('securityCheck').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+        
+        // Sayfa yüklendiğinde başlat
+        window.onload = function() {
+            createMatrixEffect();
+            startSecurityCheck();
+        };
+    </script>
+</body>
+</html>
